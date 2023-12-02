@@ -41,14 +41,18 @@ private:
     std::vector<std::vector<std::string>> kwDataSplit{};
     std::vector<double> psaData{};
 
-    // pointer to function pointer list
+    // boolean thread outputs 
+    bool* threadOutputs{};
+
+
+    void readFile(std::string fileName);
 
 
     // The main two template for group type I and II
     // -The groups that end with non hydrogen group (asteriks) # the kwCount = subStrCount
-    bool groupCheckTypeI(std::string* _group);
+    void groupCheckTypeI(std::string* _group);
     // -The groups that end with defined group (non-asteriks) # the kwCount = subStrCount + 1
-    bool groupCheckTypeII(std::string* _group);
+    void groupCheckTypeII(std::string* _group);
 
     void createFunctionPointers();
 
