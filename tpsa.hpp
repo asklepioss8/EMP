@@ -50,9 +50,9 @@ private:
 
     // The main two template for group type I and II
     // -The groups that end with non hydrogen group (asteriks) # the kwCount = subStrCount
-    void groupCheckTypeI(std::string* _group);
+    void groupCheckTypeI(std::vector<std::string>* _groupData);
     // -The groups that end with defined group (non-asteriks) # the kwCount = subStrCount + 1
-    void groupCheckTypeII(std::string* _group);
+    void groupCheckTypeII(std::vector<std::string>* _groupData);
 
     void createFunctionPointers();
 

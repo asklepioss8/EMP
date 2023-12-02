@@ -90,9 +90,13 @@ void TPSA::readFile(std::string fileName)
     threadOutputs = new(bool[currentPos]){};
 }
 
-void TPSA::groupCheckTypeI(std::string* _group)
+void TPSA::groupCheckTypeI(std::vector<std::string>* _groupData)
 {
     std::cout << "Thread started" << std::endl;
+}
+
+void TPSA::groupCheckTypeII(std::vector<std::string>* _groupData)
+{
 }
 
 void TPSA::createFunctionPointers()
@@ -101,8 +105,12 @@ void TPSA::createFunctionPointers()
     {
         if (kwData[i].back() == '*')
         {
-            // call the function at different thread
-            std::thread t(&TPSA::groupCheckTypeI, this, &kwData[i]);
+            std::thread t(&TPSA::groupCheckTypeI, this, &kwDataSplit[i]);
+            t.join();
+        }
+        else
+        {
+            std::thread t(&TPSA::groupCheckTypeII, this, &kwDataSplit[i]);
             t.join();
         }
 
