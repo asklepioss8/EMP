@@ -36,7 +36,6 @@ TPSA::TPSA(std::string smiles)
     readFile("data.txt");
     
     // process the smiles
-    std::cout << "Done process the data file" << std::endl;
     processSmiles(kwData, kwDataSplit);
 
     createFunctionPointers();
@@ -90,13 +89,86 @@ void TPSA::readFile(std::string fileName)
     threadOutputs = new(bool[currentPos]){};
 }
 
-void TPSA::groupCheckTypeI(std::vector<std::string>* _groupData)
+void TPSA::groupCheckTypeI(std::vector<std::string>* _groupData, size_t id)
 {
-    std::cout << "Thread started" << std::endl;
+    size_t len = _groupData->size();
+
+    size_t* posArr = new(size_t[len]){};
+    for (int i = 0; i < len; ++i)
+    {
+        // if find string in smiles
+        size_t pos = smiles.find((*_groupData)[i]);
+        if (pos != std::string::npos)
+        {
+            posArr[i] = pos;
+        }
+        else
+        {
+            threadOutputs[id] = false;
+            return;
+        }
+    }
+
+    // create the substrings
+    std::string* subStrArr = new(std::string[len]){};
+    for (size_t i = 0; i < len - 1; ++i)
+    {
+        subStrArr[i] = smiles.substr(posArr[i] + (*_groupData)[i].size(), posArr[i + 1] - posArr[i] - 1);
+    }
+    // + for the last one
+    subStrArr[len - 1] = smiles.substr(posArr[len - 1] + (*_groupData)[len - 1].size(), smiles.size() - posArr[len - 1] - 1);
+
+
+    // check if the substrings are valid
+    for (size_t i = 0; i < len; ++i)
+    {
+        if (!checkParenthesis(subStrArr[i]))
+        {
+            threadOutputs[id] = false;
+            return;
+        }
+    }
+    threadOutputs[id] = true;
 }
 
-void TPSA::groupCheckTypeII(std::vector<std::string>* _groupData)
+void TPSA::groupCheckTypeII(std::vector<std::string>* _groupData, size_t id)
 {
+    size_t len = _groupData->size();
+
+    size_t* posArr = new(size_t[len - 1]){};
+    for (int i = 0; i < len; ++i)
+    {
+        // if find string in smiles
+        size_t pos = smiles.find((*_groupData)[i]);
+        if (pos != std::string::npos)
+        {
+            posArr[i] = pos;
+        }
+        else
+        {
+            threadOutputs[id] = false;
+            return;
+        }
+    }
+
+    // create the substrings
+    std::string* subStrArr = new(std::string[len - 1]){};
+    for (size_t i = 0; i < len - 1; ++i)
+    {
+        subStrArr[i] = smiles.substr(posArr[i] + (*_groupData)[i].size(), posArr[i + 1] - posArr[i] - 1);
+    }
+
+    // check if the substrings are valid
+    for (size_t i = 0; i < len; ++i)
+    {
+        if (!checkParenthesis(subStrArr[i]))
+        {
+            threadOutputs[id] = false;
+            return;
+        }
+    }
+    threadOutputs[id] = true;
+
 }
 
 void TPSA::createFunctionPointers()
@@ -105,13 +177,13 @@ void TPSA::createFunctionPointers()
     {
         if (kwData[i].back() == '*')
         {
-            std::thread t(&TPSA::groupCheckTypeI, this, &kwDataSplit[i]);
-            t.join();
+            std::thread t(&TPSA::groupCheckTypeI, this, &kwDataSplit[i], i);
+            t.detach();
         }
         else
         {
             std::thread t(&TPSA::groupCheckTypeII, this, &kwDataSplit[i]);
-            t.join();
+            t.detach();
         }
 
 

@@ -1,3 +1,4 @@
+#include <Windows.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -7,6 +8,48 @@
 #include <sstream>
 #include <algorithm>
 #include <regex>
+#include <thread>
+
+
+
+// create a print function that prints with given color
+void colorPrint(int color, std::string str)
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+    std::cout << str << std::endl;
+    SetConsoleTextAttribute(hConsole, 15);
+}
+
+// create a progress bar function
+void progressBar(int progress)
+{
+    int barWidth = 70;
+    float progressRatio = (float)progress / 100;
+    std::cout << "[";
+    int pos = barWidth * progressRatio;
+    for (int i = 0; i < barWidth; ++i)
+    {
+        if (i < pos)
+        {
+            std::cout << "=";
+        }
+        else if (i == pos)
+        {
+            std::cout << ">";
+        }
+        else
+        {
+            std::cout << " ";
+        }
+    }
+    std::cout << "] " << progress << " %\r\n";
+}
+
+
+
+
+
 
 
 

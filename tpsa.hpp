@@ -17,7 +17,6 @@ CC(=O)OC1C[NH+]2CCC1CC2	    Aceclidine
 
 
 #include "utils.hpp"
-#include "thread"
 
 
 class TPSA
@@ -50,9 +49,9 @@ private:
 
     // The main two template for group type I and II
     // -The groups that end with non hydrogen group (asteriks) # the kwCount = subStrCount
-    void groupCheckTypeI(std::vector<std::string>* _groupData);
+    void groupCheckTypeI(std::vector<std::string>* _groupData, size_t id);
     // -The groups that end with defined group (non-asteriks) # the kwCount = subStrCount + 1
-    void groupCheckTypeII(std::vector<std::string>* _groupData);
+    void groupCheckTypeII(std::vector<std::string>* _groupData, size_t id);
 
     void createFunctionPointers();
 
